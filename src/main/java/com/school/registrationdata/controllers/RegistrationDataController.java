@@ -4,11 +4,13 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import com.school.registrationdata.cloudconfig.Configuration;
 import com.school.registrationdata.exceptions.RegistrationDataAlreadyExistsException;
 import com.school.registrationdata.exceptions.RegistrationDataGenericException;
 import com.school.registrationdata.exceptions.RegistrationDataNotFoundException;
 import com.school.registrationdata.dtos.RegistrationData;
 import com.school.registrationdata.repositories.RegistrationDataRepository;
+import com.school.students.dtos.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,8 +26,18 @@ public class RegistrationDataController {
 	@Autowired
 	private RegistrationDataRepository registrationDataRepository;
 
+	@Autowired
+	private Configuration cloudConfig;
+
 	@GetMapping("registration-data/")
 	public List<RegistrationData> getAllRegistrationData() {
+
+		List<RegistrationData> listOfRegistrationData = registrationDataRepository.findAll();
+
+		// Add the cloud config data to the object
+		for (RegistrationData s : listOfRegistrationData)
+			s.setEnvironment(cloudConfig.getEnvironmentCode());
+
 		return registrationDataRepository.findAll();
 	}
 	
@@ -35,6 +47,7 @@ public class RegistrationDataController {
 		Optional<RegistrationData> RegistrationData = registrationDataRepository.findByStudentNumber(studentNumber);
 		
 		if(RegistrationData.isPresent()){
+			RegistrationData.get().setEnvironment(cloudConfig.getEnvironmentCode());
 			return RegistrationData;
 		}
 		else{
