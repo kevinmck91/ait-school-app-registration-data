@@ -51,7 +51,8 @@ public class RegistrationDataController {
 			return RegistrationData;
 		}
 		else{
-			throw new RegistrationDataNotFoundException("Student number : " + studentNumber + " not found");
+			return RegistrationData;
+			//throw new RegistrationDataNotFoundException("Student number : " + studentNumber + " not found");
 		}
 		
 	}
