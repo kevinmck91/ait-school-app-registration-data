@@ -12,6 +12,8 @@ import com.school.registrationdata.dtos.RegistrationData;
 import com.school.registrationdata.repositories.RegistrationDataRepository;
 import com.school.students.dtos.Student;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.sleuth.ScopedSpan;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +31,9 @@ public class RegistrationDataController {
 	@Autowired
 	private Configuration cloudConfig;
 
+	@Autowired
+	Tracer tracer;
+
 	@GetMapping("registration-data/")
 	public List<RegistrationData> getAllRegistrationData() {
 
@@ -45,16 +50,28 @@ public class RegistrationDataController {
 	public Optional<RegistrationData> getRegistrationDataByStudentNumber(@PathVariable String studentNumber) {
 		
 		Optional<RegistrationData> RegistrationData = registrationDataRepository.findByStudentNumber(studentNumber);
-		
-		if(RegistrationData.isPresent()){
-			RegistrationData.get().setEnvironment(cloudConfig.getEnvironmentCode());
-			return RegistrationData;
+
+		// Custom trace
+		ScopedSpan span = tracer.startScopedSpan("registration-data-span");
+
+		try {
+			span.tag("getRegistrationDataByStudentNumber", studentNumber);
+
+			if(RegistrationData.isPresent()){
+				RegistrationData.get().setEnvironment(cloudConfig.getEnvironmentCode());
+			}
+			else{
+				// No longer needed as the null object is returned in case of a 'Not Found'
+				//throw new RegistrationDataNotFoundException("Student number : " + studentNumber + " not found");
+			}
+		} catch (Exception e){
+			span.error(e);
+		} finally {
+			span.end();
 		}
-		else{
-			return RegistrationData;
-			//throw new RegistrationDataNotFoundException("Student number : " + studentNumber + " not found");
-		}
-		
+
+		return RegistrationData;
+
 	}
 
 	@PostMapping("registration-data/")
@@ -78,6 +95,5 @@ public class RegistrationDataController {
 		}
 
 	}
-
 
 }

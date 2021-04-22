@@ -24,7 +24,6 @@
 
 	<dependencies>
 
-
 		<!-- Spring Web -->
 
 		<dependency>
@@ -55,7 +54,6 @@
 			<artifactId>jakarta.persistence-api</artifactId>
 		</dependency>
 
-
 		<!-- Cloud Config-->
 
 		<dependency>
@@ -81,6 +79,34 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
+
+		<!-- Sleuth -->
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-sleuth</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-sleuth-zipkin</artifactId>
+		</dependency>
+
+		<!-- Swagger -->
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-boot-starter</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
+		<!-- Shared -->
+
 		<dependency>
 			<groupId>com.school</groupId>
 			<artifactId>shared</artifactId>
